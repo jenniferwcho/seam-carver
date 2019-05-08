@@ -3,7 +3,16 @@
 # Seam Carving Project 
 
 import numpy as np 
+from PIL import Image, ImageDraw
 import cv2 
+
+def open_image(path):
+	"""
+	Opens an image given
+	"""
+	image = Image.open(path)
+	image.show()
+	return image 
 
 def energy_map(image): 
 	"""
@@ -42,10 +51,31 @@ def min_seam(image):
 
 	return M, backtrack 
 
+def carve(image):
+	"""
+	Deletes pixels from seam path with the least energy, returns new carved image
+	"""
+	row, col, channels = image.shape
+	M, backtrack = min_seam(image)
+
+	
+
+
+#def object_removal: 
+	"""
+	removes object in image
+	"""
+
+
+
+
+
 
 def main(): 
 	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png").astype(np.float64)
 	energy_map(image)
+
+	original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png")
 
 main() 
 
