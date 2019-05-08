@@ -6,6 +6,9 @@ import numpy as np
 import cv2 
 
 def energy_map(image): 
+	"""
+	Computes energy value for each pixel. Gets "derivative" of given image and sums up abs vals 
+	"""
 	b, g, r = cv2.split(image)
 	b_energy = np.absolute(cv2.Scharr(b, -1, 1, 0)) + np.absolute(cv2.Scharr(b, -1, 0, 1))
 	g_energy = np.absolute(cv2.Scharr(g, -1, 1, 0)) + np.absolute(cv2.Scharr(g, -1, 0, 1))
@@ -14,6 +17,35 @@ def energy_map(image):
 	return b_energy + g_energy + r_energy
 
 
-image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarving/sea.png").astype(np.float64)
-energy_map(image)
+def min_seam(image): 
+	"""
+	Finds a seam path from top to bottom with the least energy 
+	"""
+	row, col, channels = image.shape
+	energy_map = energy_map(image)
+
+	M = energy_map.copy()
+	backtrack = np.zeros_like(M, dtype = np.int)
+
+	for r in range(1, row): 
+		for c in range(0, col):
+			if c == 0:
+				index = np.argmin(M[r - 1, c:c + 2])
+				backtrack[r, c] = index + c
+				min_energy = M[r - 1, index + c]
+			else: 
+				index = np.argmin(M[r - 1, c - 1:c + 2])
+				backtrack[r, c] = index + c - 1
+				min_energy = M[r - 1, index + c - 1]
+
+			M[r, c] += min_energy
+
+	return M, backtrack 
+
+
+def main(): 
+	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png").astype(np.float64)
+	energy_map(image)
+
+main() 
 
