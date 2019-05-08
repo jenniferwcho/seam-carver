@@ -51,20 +51,41 @@ def min_seam(image):
 
 	return M, backtrack 
 
-def carve(image):
-	"""
-	Deletes pixels from seam path with the least energy, returns new carved image
-	"""
-	row, col, channels = image.shape
-	M, backtrack = min_seam(image)
+# def draw_seam(image): 
+# 	"""
+# 	Draws seam with least energy path 
+# 	"""
+# 	row, col, channels = image.shape
+# 	M, backtrack = min_seam(image)
 
-	
+# 	mask = np.ones((row, col), dtype = np.bool)
+# 	c = np.argmin(energy_map[-1])
+
+# 	for r in reversed(range(row)):
+# 		mask[r,c] = False
+# 		c = backtrack[r,c]
+
+# 	image[...,0][mask] = 0 
+# 	image[...,1][mask] = 0
+# 	image[...,2][mask] = 255
+
+# 	return image 
 
 
-#def object_removal: 
-	"""
-	removes object in image
-	"""
+# def carve(image):
+# 	"""
+# 	Deletes pixels from seam path with the least energy, returns new carved image
+# 	"""
+# 	row, col, channels = image.shape
+# 	M, backtrack = min_seam(image)
+
+
+
+
+# def object_removal: 
+# 	"""
+# 	removes object in image
+# 	"""
 
 
 
@@ -76,6 +97,8 @@ def main():
 	energy_map(image)
 
 	original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png")
+
+	#draw_seam(image)
 
 main() 
 
