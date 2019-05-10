@@ -3,6 +3,8 @@
 # Seam Carving Project 
 
 import numpy as np 
+import matplotlib.pyplot as plt
+import multiprocessing as mp
 from PIL import Image, ImageDraw
 import cv2 
 
@@ -14,7 +16,7 @@ def open_image(path):
 	image.show()
 	return image 
 
-def energy_map(image): 
+def calculate_map(image): 
 	"""
 	Computes energy value for each pixel. Gets "derivative" of given image and sums up abs vals 
 	"""
@@ -31,7 +33,7 @@ def min_seam(image):
 	Finds a seam path from top to bottom with the least energy 
 	"""
 	row, col, channels = image.shape
-	energy_map = energy_map(image)
+	energy_map = calculate_map(image)
 
 	M = energy_map.copy()
 	backtrack = np.zeros_like(M, dtype = np.int)
@@ -59,12 +61,13 @@ def min_seam(image):
 # 	M, backtrack = min_seam(image)
 
 # 	mask = np.ones((row, col), dtype = np.bool)
-# 	c = np.argmin(energy_map[-1])
+# 	c = np.argmin(M[-1])
 
 # 	for r in reversed(range(row)):
 # 		mask[r,c] = False
 # 		c = backtrack[r,c]
 
+# 	mask = np.logical_not(mask)
 # 	image[...,0][mask] = 0 
 # 	image[...,1][mask] = 0
 # 	image[...,2][mask] = 255
@@ -72,12 +75,25 @@ def min_seam(image):
 # 	return image 
 
 
-# def carve(image):
-# 	"""
-# 	Deletes pixels from seam path with the least energy, returns new carved image
-# 	"""
-# 	row, col, channels = image.shape
-# 	M, backtrack = min_seam(image)
+def carve(image):
+	"""
+	Deletes pixels from seam path with the least energy, returns new carved image
+	"""
+	row, col, channels = image.shape
+	M, backtrack = min_seam(image)
+
+	mask = np.ones((row,col), dtype = np.bool)
+	c = np.argmin(M[-1])
+
+	for r in reversed(range(row)):
+		mask[r,c] = False
+		c = backtrack[r,c]
+
+	mask = np.stack([mask] * 3, axis=2)
+	image = image[mask].reshape((r, c - 1, 3))
+
+	return image
+
 
 
 
@@ -85,6 +101,7 @@ def min_seam(image):
 # def object_removal: 
 # 	"""
 # 	removes object in image
+#   --let's try implementing this--
 # 	"""
 
 
@@ -94,11 +111,10 @@ def min_seam(image):
 
 def main(): 
 	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png").astype(np.float64)
-	energy_map(image)
+	calculate_map(image)
 
 	original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png")
 
-	#draw_seam(image)
 
 main() 
 
