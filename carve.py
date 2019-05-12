@@ -5,8 +5,13 @@
 import numpy as np 
 import matplotlib.pyplot as plt
 import multiprocessing as mp
-from PIL import Image, ImageDraw
 import cv2 
+import time
+from PIL import Image, ImageDraw
+from tqdm import trange
+from scipy.ndimage.filters import convolve
+
+
 
 def open_image(path):
 	"""
@@ -26,7 +31,6 @@ def calculate_map(image):
 	r_energy = np.absolute(cv2.Scharr(r, -1, 1, 0)) + np.absolute(cv2.Scharr(r, -1, 0, 1))
 	   
 	return b_energy + g_energy + r_energy
-
 
 def min_seam(image): 
 	"""
@@ -53,27 +57,6 @@ def min_seam(image):
 
 	return M, backtrack 
 
-# def draw_seam(image): 
-# 	"""
-# 	Draws seam with least energy path 
-# 	"""
-# 	row, col, channels = image.shape
-# 	M, backtrack = min_seam(image)
-
-# 	mask = np.ones((row, col), dtype = np.bool)
-# 	c = np.argmin(M[-1])
-
-# 	for r in reversed(range(row)):
-# 		mask[r,c] = False
-# 		c = backtrack[r,c]
-
-# 	mask = np.logical_not(mask)
-# 	image[...,0][mask] = 0 
-# 	image[...,1][mask] = 0
-# 	image[...,2][mask] = 255
-
-# 	return image 
-
 
 def carve(image):
 	"""
@@ -90,13 +73,23 @@ def carve(image):
 		c = backtrack[r,c]
 
 	mask = np.stack([mask] * 3, axis=2)
-	image = image[mask].reshape((r, c - 1, 3))
+	image = image[mask].reshape((row, col-1, 3))
 
 	return image
 
+def crop_by_col(image, col_scale):
+	row, col, channels = image.shape
+	new_col = int(col_scale*col)
 
+	for i in range(col - new_col): 
+		image = carve(image)
 
-
+	return image
+		
+# def crop_by_row(image, row_scale): 
+	"""
+	--let's implement this later--
+	"""
 
 # def object_removal: 
 # 	"""
@@ -106,14 +99,27 @@ def carve(image):
 
 
 
-
-
-
 def main(): 
-	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png").astype(np.float64)
-	calculate_map(image)
 
-	original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png")
+	
+	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/input_image/sea.png").astype(np.float64)
+	
+
+	scale_c = float(input("Please enter scaling value: "))
+	print(scale_c)
+
+	start = time.time()
+	output_image = crop_by_col(image, scale_c) 
+	end = time.time()
+
+	cv2.imwrite("/Users/jenniferwcho/desktop/independentStudy/seamcarver/output_image/result.png", output_image)
+
+	execution_time = end - start
+	print("Exection Time: ", execution_time)
+	
+	#original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/input_image/sea.png")
+
+	
 
 
 main() 
