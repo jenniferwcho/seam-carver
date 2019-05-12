@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 import multiprocessing as mp
 import cv2 
 import time
+import numba
 from PIL import Image, ImageDraw
-from tqdm import trange
-from scipy.ndimage.filters import convolve
+from numba import jit 
+
 
 
 
@@ -32,6 +33,7 @@ def calculate_map(image):
 	   
 	return b_energy + g_energy + r_energy
 
+@numba.jit
 def min_seam(image): 
 	"""
 	Finds a seam path from top to bottom with the least energy 
@@ -57,7 +59,7 @@ def min_seam(image):
 
 	return M, backtrack 
 
-
+@numba.jit
 def carve(image):
 	"""
 	Deletes pixels from seam path with the least energy, returns new carved image
@@ -102,7 +104,7 @@ def crop_by_col(image, col_scale):
 def main(): 
 
 	
-	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/input_image/sea.png").astype(np.float64)
+	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png").astype(np.float64)
 	
 
 	scale_c = float(input("Please enter scaling value: "))
