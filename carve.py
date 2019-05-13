@@ -44,18 +44,18 @@ def min_seam(image):
 	M = energy_map.copy()
 	backtrack = np.zeros_like(M, dtype = np.int)
 
-	for r in range(1, row): 
-		for c in range(0, col):
-			if c == 0:
-				index = np.argmin(M[r - 1, c:c + 2])
-				backtrack[r, c] = index + c
-				min_energy = M[r - 1, index + c]
+	for i in range(1, row): 
+		for j in range(0, col):
+			if j == 0:
+				index = np.argmin(M[i - 1, j:j + 2])
+				backtrack[i, j] = index + j
+				min_energy = M[i - 1, index + j]
 			else: 
-				index = np.argmin(M[r - 1, c - 1:c + 2])
-				backtrack[r, c] = index + c - 1
-				min_energy = M[r - 1, index + c - 1]
+				index = np.argmin(M[i - 1, j - 1:j + 2])
+				backtrack[i, j] = index + j - 1
+				min_energy = M[i - 1, index + j - 1]
 
-			M[r, c] += min_energy
+			M[i, j] += min_energy
 
 	return M, backtrack 
 
@@ -68,11 +68,11 @@ def carve(image):
 	M, backtrack = min_seam(image)
 
 	mask = np.ones((row,col), dtype = np.bool)
-	c = np.argmin(M[-1])
+	j = np.argmin(M[-1])
 
-	for r in reversed(range(row)):
-		mask[r,c] = False
-		c = backtrack[r,c]
+	for i in reversed(range(row)):
+		mask[i,j] = False
+		j = backtrack[i,j]
 
 	mask = np.stack([mask] * 3, axis=2)
 	image = image[mask].reshape((row, col-1, 3))
@@ -104,12 +104,9 @@ def crop_by_col(image, col_scale):
 
 def main(): 
 
-	
 	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png").astype(np.float64)
-	
-
 	scale_c = float(input("Please enter scaling value: "))
-	print(scale_c)
+	print("Scaling Value: ", scale_c)
 
 	start = time.time()
 	output_image = crop_by_col(image, scale_c) 
@@ -117,12 +114,13 @@ def main():
 
 	cv2.imwrite("/Users/jenniferwcho/desktop/independentStudy/seamcarver/output_image/result.png", output_image)
 	result_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/output_image/result.png")
+	original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png")
 
 
 	execution_time = end - start
 	print("Exection Time: ", execution_time)
 	
-	original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png")
+	
 
 	
 
