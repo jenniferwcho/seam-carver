@@ -92,6 +92,7 @@ def crop_by_col(image, col_scale):
 	"""
 	--let's implement this later--
 	"""
+	
 
 # def object_removal: 
 # 	"""
@@ -115,11 +116,13 @@ def main():
 	end = time.time()
 
 	cv2.imwrite("/Users/jenniferwcho/desktop/independentStudy/seamcarver/output_image/result.png", output_image)
+	result_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/output_image/result.png")
+
 
 	execution_time = end - start
 	print("Exection Time: ", execution_time)
 	
-	#original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/input_image/sea.png")
+	original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png")
 
 	
 
