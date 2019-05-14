@@ -80,6 +80,9 @@ def carve(image):
 	return image
 
 def crop_by_col(image, col_scale):
+	"""
+	crops column
+	"""
 	row, col, channels = image.shape
 	new_col = int(col_scale*col)
 
@@ -88,10 +91,16 @@ def crop_by_col(image, col_scale):
 
 	return image
 		
-# def crop_by_row(image, row_scale): 
+def crop_by_row(image, row_scale): 
 	"""
-	--let's implement this later--
+	crops row by rotating image and calling crop_by_col function
 	"""
+	image = np.rot90(image, 1, (0,1))
+	image = crop_by_col(image, row_scale)
+	image = np.rot90(image, 3, (0,1))
+
+	return image
+
 	
 
 # def object_removal: 
@@ -105,11 +114,12 @@ def crop_by_col(image, col_scale):
 def main(): 
 
 	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png").astype(np.float64)
-	scale_c = float(input("Please enter scaling value: "))
-	print("Scaling Value: ", scale_c)
+	scale = float(input("Please enter scaling value: "))
+	print("Scaling Value: ", scale)
 
 	start = time.time()
-	output_image = crop_by_col(image, scale_c) 
+	#output_image = crop_by_col(image, scale) 
+	output_image = crop_by_row(image, scale)
 	end = time.time()
 
 	cv2.imwrite("/Users/jenniferwcho/desktop/independentStudy/seamcarver/output_image/result.png", output_image)
