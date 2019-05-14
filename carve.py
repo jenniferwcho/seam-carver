@@ -3,13 +3,13 @@
 # Seam Carving Project 
 
 import numpy as np 
-import matplotlib.pyplot as plt
-import multiprocessing as mp
+#import matplotlib.pyplot as plt
+#import multiprocessing as mp
 import cv2 
 import time
 import numba
-from PIL import Image, ImageDraw
-from numba import jit 
+#from PIL import Image, ImageDraw
+#from numba import jit 
 
 
 
@@ -104,7 +104,7 @@ def crop_by_col(image, col_scale):
 
 def main(): 
 
-	image = cv2.imread("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png").astype(np.float64)
+	image = cv2.imread("sea.png").astype(np.float64)
 	scale_c = float(input("Please enter scaling value: "))
 	print("Scaling Value: ", scale_c)
 
@@ -112,9 +112,9 @@ def main():
 	output_image = crop_by_col(image, scale_c) 
 	end = time.time()
 
-	cv2.imwrite("/Users/jenniferwcho/desktop/independentStudy/seamcarver/output_image/result.png", output_image)
-	result_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/output_image/result.png")
-	original_image = open_image("/Users/jenniferwcho/desktop/independentStudy/seamcarver/sea.png")
+	cv2.imwrite("result.png", output_image)
+	result_image = open_image("result.png")
+	original_image = open_image("sea.png")
 
 
 	execution_time = end - start
